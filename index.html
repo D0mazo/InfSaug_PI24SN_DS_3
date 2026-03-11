@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RSA Encryption System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="container">
+
+    <h2>RSA Encryption</h2>
+
+    <form action="encrypt.php" method="post">
+
+        <input type="number" name="p" placeholder="Prime number p" required>
+
+        <input type="number" name="q" placeholder="Prime number q" required>
+
+        <textarea name="text" placeholder="Enter text"></textarea>
+
+        <button type="submit">Encrypt</button>
+
+    </form>
+
+    <hr>
+
+    <h2>Decrypt from file</h2>
+
+    <form action="decrypt.php" method="post">
+        <button type="submit">Decrypt Text</button>
+    </form>
+
+</div>
+
+</body>
+</html>
