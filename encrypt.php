@@ -4,8 +4,12 @@ include "rsa_functions.php";
 $p=$_POST['p'];
 $q=$_POST['q'];
 
-// Nuskaityti tekstą iš įkelto failo
-$text = file_get_contents($_FILES['textfile']['tmp_name']);
+// Jei failas įkeltas - naudoti failą, jei ne - naudoti įvestą tekstą
+if(isset($_FILES['textfile']) && $_FILES['textfile']['size'] > 0){
+    $text = file_get_contents($_FILES['textfile']['tmp_name']);
+} else {
+    $text = $_POST['text'];
+}
 
 $n=$p*$q;
 $phi=($p-1)*($q-1);
