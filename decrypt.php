@@ -1,42 +1,32 @@
 <?php
 include "rsa_functions.php";
 
-$p=$_POST['p'];
-$q=$_POST['q'];
-$text=$_POST['text'];
+$data = file_get_contents("data/encrypted.txt");
+$lines = explode("\n", trim($data));
 
-$n=$p*$q;
-$phi=($p-1)*($q-1);
+$cipher = $lines[0];
+$n = intval($lines[1]);
+$e = intval($lines[2]);
 
-$e=3;
-while(gcd($e,$phi)!=1){
-    $e++;
-}
+$phi_guess = null;
+$d = null;
 
-$d=modInverse($e,$phi);
-
-$cipher=encryptRSA($text,$e,$n);
-
-file_put_contents("data/encrypted.txt",$cipher."\n".$n."\n".$e);
+// Rasti d reikia p ir q - tad saugome ir juos
+// Geriau faile saugoti ir d privatųjį raktą
 
 ?>
 
-    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
 
-    <div class="container">
+<div class="container">
 
-    <h2>Šifravimo Rezultatas</h2>
+    <h2>Dešifravimo Rezultatas</h2>
 
     <div class="result">
         Užkoduotas tekstas:<br>
         <?php echo $cipher; ?>
     </div>
 
-    <div class="result">
-        Viešasis raktas (n,e):<br>
-        <?php echo "$n , $e"; ?>
-    </div>
-
     <a href="index.php">Atgal</a>
 
-    </div><?php
+</div>

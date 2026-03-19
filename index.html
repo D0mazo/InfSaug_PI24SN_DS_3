@@ -10,13 +10,13 @@
 
     <h2>RSA Šifravimas</h2>
 
-    <form action="encrypt.php" method="post">
+    <form action="encrypt.php" method="post" enctype="multipart/form-data">
 
         <input type="number" name="p" placeholder="skaičius p" required>
 
         <input type="number" name="q" placeholder="skaičius q" required>
 
-        <textarea name="text" placeholder="Įveskite tekstą"></textarea>
+        <input type="file" name="textfile" accept=".txt" required>
 
         <button type="submit">Užkoduoti</button>
 

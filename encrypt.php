@@ -3,7 +3,9 @@ include "rsa_functions.php";
 
 $p=$_POST['p'];
 $q=$_POST['q'];
-$text=$_POST['text'];
+
+// Nuskaityti tekstą iš įkelto failo
+$text = file_get_contents($_FILES['textfile']['tmp_name']);
 
 $n=$p*$q;
 $phi=($p-1)*($q-1);
@@ -17,7 +19,7 @@ $d=modInverse($e,$phi);
 
 $cipher=encryptRSA($text,$e,$n);
 
-file_put_contents("data/encrypted.txt",$cipher."\n".$n."\n".$e);
+file_put_contents("data/encrypted.txt",$cipher."\n".$n."\n".$e."\n".$d);
 
 ?>
 
@@ -35,6 +37,11 @@ file_put_contents("data/encrypted.txt",$cipher."\n".$n."\n".$e);
     <div class="result">
         Viešasis raktas (n,e):<br>
         <?php echo "$n , $e"; ?>
+    </div>
+
+    <div class="result">
+        Privatusis raktas (d):<br>
+        <?php echo $d; ?>
     </div>
 
     <a href="index.php">Atgal</a>
