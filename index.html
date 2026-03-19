@@ -1,33 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>RSA Encryption System</title>
+    <title>RSA Šifravimo Sistema</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="container">
 
-    <h2>RSA Encryption</h2>
+    <h2>RSA Šifravimas</h2>
 
     <form action="encrypt.php" method="post">
 
-        <input type="number" name="p" placeholder="Prime number p" required>
+        <input type="number" name="p" placeholder="skaičius p" required>
 
-        <input type="number" name="q" placeholder="Prime number q" required>
+        <input type="number" name="q" placeholder="skaičius q" required>
 
-        <textarea name="text" placeholder="Enter text"></textarea>
+        <textarea name="text" placeholder="Įveskite tekstą"></textarea>
 
-        <button type="submit">Encrypt</button>
+        <button type="submit">Užkoduoti</button>
 
     </form>
 
     <hr>
 
-    <h2>Decrypt from file</h2>
+    <h2>Iššifruoti</h2>
 
     <form action="decrypt.php" method="post">
-        <button type="submit">Decrypt Text</button>
+        <button type="submit">Iššifruoti tekstą</button>
     </form>
 
 </div>

@@ -21,22 +21,22 @@ file_put_contents("data/encrypted.txt",$cipher."\n".$n."\n".$e);
 
 ?>
 
-    <link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="style.css">
 
-    <div class="container">
+<div class="container">
 
-    <h2>Encryption Result</h2>
+    <h2>Šifravimo Rezultatas</h2>
 
     <div class="result">
-        Encrypted Text:<br>
+        Užkoduotas tekstas:<br>
         <?php echo $cipher; ?>
     </div>
 
     <div class="result">
-        Public Key (n,e):<br>
+        Viešasis raktas (n,e):<br>
         <?php echo "$n , $e"; ?>
     </div>
 
-    <a href="index.php">Back</a>
+    <a href="index.php">Atgal</a>
 
-    </div><?php
+</div>
