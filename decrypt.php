@@ -1,32 +1,25 @@
 <?php
 include "rsa_functions.php";
 
-$data = file_get_contents("data/encrypted.txt");
+// Nuskaitymas iš failo
+$data  = file_get_contents("data/encrypted.txt");
 $lines = explode("\n", trim($data));
 
-$cipher = $lines[0];
-$n = intval($lines[1]);
-$e = intval($lines[2]);
+$cipher = trim($lines[0]);
+$n      = (float)trim($lines[1]);
+$e      = (float)trim($lines[2]);
+$d      = (float)trim($lines[3]);
 
-$phi_guess = null;
-$d = null;
+// Dešifravimas
+$decrypted = decryptRSA($cipher, $d, $n);
 
-// Rasti d reikia p ir q - tad saugome ir juos
-// Geriau faile saugoti ir d privatųjį raktą
-
+// Rezultatai grąžinami kaip JSON
+header('Content-Type: application/json');
+echo json_encode([
+        'cipher'    => $cipher,
+        'decrypted' => $decrypted,
+        'n'         => $n,
+        'e'         => $e,
+        'd'         => $d
+]);
 ?>
-
-<link rel="stylesheet" href="style.css">
-
-<div class="container">
-
-    <h2>Dešifravimo Rezultatas</h2>
-
-    <div class="result">
-        Užkoduotas tekstas:<br>
-        <?php echo $cipher; ?>
-    </div>
-
-    <a href="index.php">Atgal</a>
-
-</div>

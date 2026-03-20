@@ -1,53 +1,44 @@
 <?php
 include "rsa_functions.php";
 
-$p=$_POST['p'];
-$q=$_POST['q'];
+$p = (float)$_POST['p'];
+$q = (float)$_POST['q'];
 
-// Jei failas įkeltas - naudoti failą, jei ne - naudoti įvestą tekstą
-if(isset($_FILES['textfile']) && $_FILES['textfile']['size'] > 0){
+// Tekstas iš failo arba įvesties
+if (isset($_FILES['textfile']) && $_FILES['textfile']['size'] > 0) {
     $text = file_get_contents($_FILES['textfile']['tmp_name']);
 } else {
     $text = $_POST['text'];
 }
 
-$n=$p*$q;
-$phi=($p-1)*($q-1);
+// RSA parametrų skaičiavimas
+$n   = $p * $q;
+$phi = ($p - 1) * ($q - 1);
 
-$e=3;
-while(gcd($e,$phi)!=1){
+// Viešojo rakto radimas
+$e = 3;
+while (gcd($e, $phi) != 1) {
     $e++;
 }
 
-$d=modInverse($e,$phi);
+// Privataus rakto radimas (išplėstinis Euklido)
+$d = modInverse($e, $phi);
 
-$cipher=encryptRSA($text,$e,$n);
+// Šifravimas
+$cipher = encryptRSA($text, $e, $n);
 
-file_put_contents("data/encrypted.txt",$cipher."\n".$n."\n".$e."\n".$d);
+// Saugojimas į failą
+if (!is_dir("data")) mkdir("data");
+file_put_contents("data/encrypted.txt", $cipher . "\n" . $n . "\n" . $e . "\n" . $d);
 
+// Rezultatai grąžinami kaip JSON
+header('Content-Type: application/json');
+echo json_encode([
+        'cipher' => $cipher,
+        'n'      => $n,
+        'e'      => $e,
+        'd'      => $d,
+        'phi'    => $phi,
+        'text'   => $text
+]);
 ?>
-
-<link rel="stylesheet" href="style.css">
-
-<div class="container">
-
-    <h2>Šifravimo Rezultatas</h2>
-
-    <div class="result">
-        Užkoduotas tekstas:<br>
-        <?php echo $cipher; ?>
-    </div>
-
-    <div class="result">
-        Viešasis raktas (n,e):<br>
-        <?php echo "$n , $e"; ?>
-    </div>
-
-    <div class="result">
-        Privatusis raktas (d):<br>
-        <?php echo $d; ?>
-    </div>
-
-    <a href="index.php">Atgal</a>
-
-</div>
