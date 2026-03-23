@@ -3,7 +3,7 @@ include "rsa_functions.php";
 
 if (!file_exists("data/encrypted.txt")) {
     header('Content-Type: application/json');
-    echo json_encode(['error' => 'Užšifruotas failas nerastas!']);
+    echo json_encode(['error' => 'Serverio failas nerastas! Pirmiausia užšifruokite tekstą.']);
     exit;
 }
 

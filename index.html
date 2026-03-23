@@ -20,8 +20,7 @@
             <input type="number" id="q" placeholder="Pirminis skaičius q" min="2">
         </div>
         <div class="hint">
-            ⚠️ <strong>Svarbu:</strong> p × q turi būti <strong>didesnis nei 127</strong>, kad šifravimas veiktų teisingai.<br>
-            ⚠️ <strong>Svarbu:</strong> p ir q turi būti <strong> pirminiai skaičiai</strong> pvz :  2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47
+            ⚠️ <strong>Svarbu:</strong> p × q turi būti <strong>didesnis nei 127</strong>, kad šifravimas veiktų teisingai.
         </div>
 
         <textarea id="inputText" placeholder="Įveskite tekstą kurį norite užšifruoti..."></textarea>
@@ -69,8 +68,39 @@
     <!-- DEŠIFRAVIMAS -->
     <div class="card">
         <h2>Dešifravimas</h2>
-        <p style="color:#666; font-size:14px; margin-bottom:16px;">Dešifruojamas paskutinis užšifruotas tekstas iš serverio.</p>
-        <button class="secondary" onclick="decrypt()">🔓 Iššifruoti tekstą</button>
+
+        <p style="color:#666; font-size:14px; margin-bottom:8px;">
+            Pasirinkite iš ko dešifruoti:
+        </p>
+
+        <!-- Pasirinkimas: serverio failas arba įkelti failą -->
+        <div class="decrypt-tabs">
+            <button class="tab-btn active" id="tabServer" onclick="switchTab('server')">
+                🖥️ Iš serverio failo
+            </button>
+            <button class="tab-btn" id="tabUpload" onclick="switchTab('upload')">
+                📂 Įkelti užšifruotą failą
+            </button>
+        </div>
+
+        <!-- Serverio failo sekcija -->
+        <div id="sectionServer" style="margin-top:12px;">
+            <p style="color:#888; font-size:13px;">
+                📂 Nuskaitoma iš: <code>data/encrypted.txt</code> (paskutinis užšifruotas tekstas)
+            </p>
+            <button class="secondary" onclick="decryptFromServer()">🔓 Iššifruoti iš serverio</button>
+        </div>
+
+        <!-- Failo įkėlimo sekcija -->
+        <div id="sectionUpload" class="hidden" style="margin-top:12px;">
+            <p style="color:#888; font-size:13px;">
+                Įkelkite anksčiau atsisiųstą užšifruotą failą (<code>encrypted.txt</code>)
+            </p>
+            <label class="file-label" for="decryptFileInput">📂 Pasirinkti užšifruotą failą</label>
+            <input type="file" id="decryptFileInput" accept=".txt">
+            <div id="decryptFileName" style="margin-top:6px; font-size:13px; color:#555;"></div>
+            <button class="secondary" onclick="decryptFromFile()" style="margin-top:10px;">🔓 Iššifruoti iš failo</button>
+        </div>
 
         <div id="decryptSpinner" class="spinner hidden">Dešifruojama...</div>
         <div id="decryptError" class="error-box hidden"></div>
@@ -90,7 +120,7 @@
 </div>
 
 <script>
-    // Failo įkėlimas → įdėti tekstą į textarea
+    // --- Šifravimo failo įkėlimas ---
     document.getElementById('fileInput').addEventListener('change', function () {
         const file = this.files[0];
         if (!file) return;
@@ -102,6 +132,34 @@
         reader.readAsText(file);
     });
 
+    // --- Dešifravimo failo įkėlimas ---
+    document.getElementById('decryptFileInput').addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+        document.getElementById('decryptFileName').textContent = '📄 ' + file.name;
+    });
+
+    // --- Tab perjungimas ---
+    function switchTab(tab) {
+        document.getElementById('sectionServer').classList.add('hidden');
+        document.getElementById('sectionUpload').classList.add('hidden');
+        document.getElementById('tabServer').classList.remove('active');
+        document.getElementById('tabUpload').classList.remove('active');
+
+        if (tab === 'server') {
+            document.getElementById('sectionServer').classList.remove('hidden');
+            document.getElementById('tabServer').classList.add('active');
+        } else {
+            document.getElementById('sectionUpload').classList.remove('hidden');
+            document.getElementById('tabUpload').classList.add('active');
+        }
+
+        // Paslėpti ankstesnius rezultatus
+        document.getElementById('decryptResult').classList.add('hidden');
+        document.getElementById('decryptError').classList.add('hidden');
+    }
+
+    // --- Šifravimas ---
     async function encrypt() {
         const p    = document.getElementById('p').value;
         const q    = document.getElementById('q').value;
@@ -128,7 +186,6 @@
 
             document.getElementById('encryptSpinner').classList.add('hidden');
 
-            // Show error if PHP returned one
             if (data.error) {
                 errorBox.textContent = '❌ ' + data.error;
                 errorBox.classList.remove('hidden');
@@ -151,34 +208,80 @@
         }
     }
 
-    async function decrypt() {
-        const errorBox = document.getElementById('decryptError');
-        errorBox.classList.add('hidden');
-        document.getElementById('decryptSpinner').classList.remove('hidden');
-        document.getElementById('decryptResult').classList.add('hidden');
+    // --- Dešifravimas iš serverio failo ---
+    async function decryptFromServer() {
+        showDecryptSpinner();
 
         try {
             const res  = await fetch('decrypt.php', { method: 'POST' });
             const data = await res.json();
-
-            document.getElementById('decryptSpinner').classList.add('hidden');
+            hideDecryptSpinner();
 
             if (data.error) {
-                errorBox.textContent = '❌ ' + data.error;
-                errorBox.classList.remove('hidden');
+                showDecryptError(data.error);
                 return;
             }
 
-            document.getElementById('decCipher').textContent = data.cipher;
-            document.getElementById('decText').textContent   = data.decrypted;
-
-            document.getElementById('decryptResult').classList.remove('hidden');
+            showDecryptResult(data.cipher, data.decrypted);
 
         } catch (err) {
-            document.getElementById('decryptSpinner').classList.add('hidden');
-            errorBox.textContent = '❌ Serverio klaida: ' + err.message;
-            errorBox.classList.remove('hidden');
+            hideDecryptSpinner();
+            showDecryptError('Serverio klaida: ' + err.message);
         }
+    }
+
+    // --- Dešifravimas iš įkelto failo ---
+    async function decryptFromFile() {
+        const fileInput = document.getElementById('decryptFileInput');
+        if (!fileInput.files[0]) {
+            alert('Prašome pasirinkti užšifruotą failą!');
+            return;
+        }
+
+        showDecryptSpinner();
+
+        const formData = new FormData();
+        formData.append('encryptedFile', fileInput.files[0]);
+
+        try {
+            const res  = await fetch('decrypt_file.php', { method: 'POST', body: formData });
+            const data = await res.json();
+            hideDecryptSpinner();
+
+            if (data.error) {
+                showDecryptError(data.error);
+                return;
+            }
+
+            showDecryptResult(data.cipher, data.decrypted);
+
+        } catch (err) {
+            hideDecryptSpinner();
+            showDecryptError('Serverio klaida: ' + err.message);
+        }
+    }
+
+    // --- Pagalbinės funkcijos ---
+    function showDecryptSpinner() {
+        document.getElementById('decryptSpinner').classList.remove('hidden');
+        document.getElementById('decryptResult').classList.add('hidden');
+        document.getElementById('decryptError').classList.add('hidden');
+    }
+
+    function hideDecryptSpinner() {
+        document.getElementById('decryptSpinner').classList.add('hidden');
+    }
+
+    function showDecryptError(msg) {
+        const errorBox = document.getElementById('decryptError');
+        errorBox.textContent = '❌ ' + msg;
+        errorBox.classList.remove('hidden');
+    }
+
+    function showDecryptResult(cipher, decrypted) {
+        document.getElementById('decCipher').textContent = cipher;
+        document.getElementById('decText').textContent   = decrypted;
+        document.getElementById('decryptResult').classList.remove('hidden');
     }
 
     function downloadEncrypted() {
