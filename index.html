@@ -1,127 +1,139 @@
 <!DOCTYPE html>
-    <html lang="lt">
-    <head>
-        <meta charset="UTF-8">
-        <title>RSA Šifravimo Sistema</title>
-        <link rel="stylesheet" href="style.css">
-    </head>
-    <body>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <title>RSA Šifravimo Sistema</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-    <div class="container">
+<div class="container">
 
-        <h1>🔐 RSA Šifravimo Sistema</h1>
+    <h1>🔐 RSA Šifravimo Sistema</h1>
 
-        <!-- ŠIFRAVIMAS -->
-        <div class="card">
-            <h2>Šifravimas</h2>
+    <!-- ŠIFRAVIMAS -->
+    <div class="card">
+        <h2>Šifravimas</h2>
 
-            <div class="row">
-                <input type="number" id="p" placeholder="Pirminis skaičius p" min="2">
-                <input type="number" id="q" placeholder="Pirminis skaičius q" min="2">
-            </div>
-            <div class="hint">
-                ⚠️ <strong>Svarbu:</strong> p × q turi būti <strong>didesnis nei 127</strong>, kad šifravimas veiktų teisingai.<br>
-
-            </div>
-
-            <textarea id="inputText" placeholder="Įveskite tekstą kurį norite užšifruoti..."></textarea>
-
-            <div class="divider">— arba įkelkite .txt failą —</div>
-
-            <label class="file-label" for="fileInput">📂 Pasirinkti .txt failą</label>
-            <input type="file" id="fileInput" accept=".txt">
-            <div id="fileName"></div>
-
-            <button onclick="encrypt()">🔒 Užšifruoti</button>
-
-            <div id="encryptSpinner" class="spinner hidden">Šifruojama...</div>
-
-            <div id="encryptResult" class="hidden" style="margin-top:20px">
-                <div class="result-box">
-                    <label>Pradinis tekstas</label>
-                    <span id="resOriginal"></span>
-                </div>
-                <div class="result-box">
-                    <label>n = p × q</label>
-                    <span id="resN"></span>
-                </div>
-                <div class="result-box">
-                    <label>Φ(n) = (p-1)(q-1)</label>
-                    <span id="resPhi"></span>
-                </div>
-                <div class="result-box">
-                    <label>Viešasis raktas e</label>
-                    <span id="resE"></span>
-                </div>
-                <div class="result-box">
-                    <label>Privatusis raktas d</label>
-                    <span id="resD"></span>
-                </div>
-                <div class="result-box">
-                    <label>Užšifruotas tekstas</label>
-                    <span id="resCipher"></span>
-                </div>
-                <button class="download-btn" onclick="downloadEncrypted()">⬇️ Atsisiųsti užšifruotą failą</button>
-            </div>
+        <div class="row">
+            <input type="number" id="p" placeholder="Pirminis skaičius p" min="2">
+            <input type="number" id="q" placeholder="Pirminis skaičius q" min="2">
+        </div>
+        <div class="hint">
+            ⚠️ <strong>Svarbu:</strong> p × q turi būti <strong>didesnis nei 127</strong>, kad šifravimas veiktų teisingai.<br>
+            ⚠️ <strong>Svarbu:</strong> p ir q turi būti <strong> pirminiai skaičiai</strong> pvz :  2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47
         </div>
 
-        <!-- DEŠIFRAVIMAS -->
-        <div class="card">
-            <h2>Dešifravimas</h2>
-            <p style="color:#666; font-size:14px; margin-bottom:16px;">Dešifruojamas paskutinis užšifruotas tekstas iš serverio.</p>
-            <button class="secondary" onclick="decrypt()">🔓 Iššifruoti tekstą</button>
+        <textarea id="inputText" placeholder="Įveskite tekstą kurį norite užšifruoti..."></textarea>
 
-            <div id="decryptSpinner" class="spinner hidden">Dešifruojama...</div>
+        <div class="divider">— arba įkelkite .txt failą —</div>
 
-            <div id="decryptResult" class="hidden" style="margin-top:20px">
-                <div class="result-box">
-                    <label>Užšifruotas tekstas</label>
-                    <span id="decCipher"></span>
-                </div>
-                <div class="result-box">
-                    <label>Iššifruotas tekstas</label>
-                    <span id="decText" style="font-weight:bold; color:#28a745;"></span>
-                </div>
+        <label class="file-label" for="fileInput">📂 Pasirinkti .txt failą</label>
+        <input type="file" id="fileInput" accept=".txt">
+        <div id="fileName"></div>
+
+        <button onclick="encrypt()">🔒 Užšifruoti</button>
+
+        <div id="encryptSpinner" class="spinner hidden">Šifruojama...</div>
+        <div id="encryptError" class="error-box hidden"></div>
+
+        <div id="encryptResult" class="hidden" style="margin-top:20px">
+            <div class="result-box">
+                <label>Pradinis tekstas</label>
+                <span id="resOriginal"></span>
             </div>
+            <div class="result-box">
+                <label>N = P × Q</label>
+                <span id="resN"></span>
+            </div>
+            <div class="result-box">
+                <label>Φ(N) = (P-1)(Q-1)</label>
+                <span id="resPhi"></span>
+            </div>
+            <div class="result-box">
+                <label>Viešasis raktas E</label>
+                <span id="resE"></span>
+            </div>
+            <div class="result-box">
+                <label>Privatusis raktas D</label>
+                <span id="resD"></span>
+            </div>
+            <div class="result-box">
+                <label>Užšifruotas tekstas</label>
+                <span id="resCipher"></span>
+            </div>
+            <button class="download-btn" onclick="downloadEncrypted()">⬇️ Atsisiųsti užšifruotą failą</button>
         </div>
-
     </div>
 
-    <script>
-        // Failo įkėlimas → įdėti tekstą į textarea
-        document.getElementById('fileInput').addEventListener('change', function() {
-            const file = this.files[0];
-            if (!file) return;
-            document.getElementById('fileName').textContent = '📄 ' + file.name;
-            const reader = new FileReader();
-            reader.onload = e => {
-                document.getElementById('inputText').value = e.target.result;
-            };
-            reader.readAsText(file);
-        });
+    <!-- DEŠIFRAVIMAS -->
+    <div class="card">
+        <h2>Dešifravimas</h2>
+        <p style="color:#666; font-size:14px; margin-bottom:16px;">Dešifruojamas paskutinis užšifruotas tekstas iš serverio.</p>
+        <button class="secondary" onclick="decrypt()">🔓 Iššifruoti tekstą</button>
 
-        async function encrypt() {
-            const p = document.getElementById('p').value;
-            const q = document.getElementById('q').value;
-            const text = document.getElementById('inputText').value;
+        <div id="decryptSpinner" class="spinner hidden">Dešifruojama...</div>
+        <div id="decryptError" class="error-box hidden"></div>
 
-            if (!p || !q || !text) {
-                alert('Prašome įvesti p, q ir tekstą!');
-                return;
-            }
+        <div id="decryptResult" class="hidden" style="margin-top:20px">
+            <div class="result-box">
+                <label>Užšifruotas tekstas</label>
+                <span id="decCipher"></span>
+            </div>
+            <div class="result-box">
+                <label>Iššifruotas tekstas</label>
+                <span id="decText" style="font-weight:bold; color:#28a745;"></span>
+            </div>
+        </div>
+    </div>
 
-            document.getElementById('encryptSpinner').classList.remove('hidden');
-            document.getElementById('encryptResult').classList.add('hidden');
+</div>
 
-            const formData = new FormData();
-            formData.append('p', p);
-            formData.append('q', q);
-            formData.append('text', text);
+<script>
+    // Failo įkėlimas → įdėti tekstą į textarea
+    document.getElementById('fileInput').addEventListener('change', function () {
+        const file = this.files[0];
+        if (!file) return;
+        document.getElementById('fileName').textContent = '📄 ' + file.name;
+        const reader = new FileReader();
+        reader.onload = e => {
+            document.getElementById('inputText').value = e.target.result;
+        };
+        reader.readAsText(file);
+    });
 
+    async function encrypt() {
+        const p    = document.getElementById('p').value;
+        const q    = document.getElementById('q').value;
+        const text = document.getElementById('inputText').value;
+
+        if (!p || !q || !text) {
+            alert('Prašome įvesti p, q ir tekstą!');
+            return;
+        }
+
+        const errorBox = document.getElementById('encryptError');
+        errorBox.classList.add('hidden');
+        document.getElementById('encryptSpinner').classList.remove('hidden');
+        document.getElementById('encryptResult').classList.add('hidden');
+
+        const formData = new FormData();
+        formData.append('p', p);
+        formData.append('q', q);
+        formData.append('text', text);
+
+        try {
             const res  = await fetch('encrypt.php', { method: 'POST', body: formData });
             const data = await res.json();
 
             document.getElementById('encryptSpinner').classList.add('hidden');
+
+            // Show error if PHP returned one
+            if (data.error) {
+                errorBox.textContent = '❌ ' + data.error;
+                errorBox.classList.remove('hidden');
+                return;
+            }
 
             document.getElementById('resOriginal').textContent = data.text;
             document.getElementById('resN').textContent        = data.n;
@@ -131,37 +143,58 @@
             document.getElementById('resCipher').textContent   = data.cipher;
 
             document.getElementById('encryptResult').classList.remove('hidden');
+
+        } catch (err) {
+            document.getElementById('encryptSpinner').classList.add('hidden');
+            errorBox.textContent = '❌ Serverio klaida: ' + err.message;
+            errorBox.classList.remove('hidden');
         }
+    }
 
-        async function decrypt() {
-            document.getElementById('decryptSpinner').classList.remove('hidden');
-            document.getElementById('decryptResult').classList.add('hidden');
+    async function decrypt() {
+        const errorBox = document.getElementById('decryptError');
+        errorBox.classList.add('hidden');
+        document.getElementById('decryptSpinner').classList.remove('hidden');
+        document.getElementById('decryptResult').classList.add('hidden');
 
+        try {
             const res  = await fetch('decrypt.php', { method: 'POST' });
             const data = await res.json();
 
             document.getElementById('decryptSpinner').classList.add('hidden');
 
+            if (data.error) {
+                errorBox.textContent = '❌ ' + data.error;
+                errorBox.classList.remove('hidden');
+                return;
+            }
+
             document.getElementById('decCipher').textContent = data.cipher;
             document.getElementById('decText').textContent   = data.decrypted;
 
             document.getElementById('decryptResult').classList.remove('hidden');
+
+        } catch (err) {
+            document.getElementById('decryptSpinner').classList.add('hidden');
+            errorBox.textContent = '❌ Serverio klaida: ' + err.message;
+            errorBox.classList.remove('hidden');
         }
+    }
 
-        function downloadEncrypted() {
-            const cipher = document.getElementById('resCipher').textContent;
-            const n      = document.getElementById('resN').textContent;
-            const e      = document.getElementById('resE').textContent;
-            const d      = document.getElementById('resD').textContent;
+    function downloadEncrypted() {
+        const cipher = document.getElementById('resCipher').textContent;
+        const n      = document.getElementById('resN').textContent;
+        const e      = document.getElementById('resE').textContent;
+        const d      = document.getElementById('resD').textContent;
 
-            const content = `Užšifruotas tekstas:\n${cipher}\n\nViešasis raktas (n, e):\n${n}, ${e}\n\nPrivatusis raktas (d):\n${d}`;
-            const blob = new Blob([content], { type: 'text/plain' });
-            const a    = document.createElement('a');
-            a.href     = URL.createObjectURL(blob);
-            a.download = 'encrypted.txt';
-            a.click();
-        }
-    </script>
+        const content = `Užšifruotas tekstas:\n${cipher}\n\nViešasis raktas (n, e):\n${n}, ${e}\n\nPrivatusis raktas (d):\n${d}`;
+        const blob = new Blob([content], { type: 'text/plain' });
+        const a    = document.createElement('a');
+        a.href     = URL.createObjectURL(blob);
+        a.download = 'encrypted.txt';
+        a.click();
+    }
+</script>
 
-    </body>
+</body>
 </html>

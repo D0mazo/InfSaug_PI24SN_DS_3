@@ -30,16 +30,29 @@ function modInverse($e, $phi) {
     return ($x % $phi + $phi) % $phi;
 }
 
-// Greitas modulinis kėlimas laipsniu (be bibliotekų)
+// Patikrina ar skaičius yra pirminis
+function isPrime($n) {
+    if ($n < 2) return false;
+    if ($n < 4) return true;
+    if ($n % 2 == 0 || $n % 3 == 0) return false;
+    for ($i = 5; $i * $i <= $n; $i += 6) {
+        if ($n % $i == 0 || $n % ($i + 2) == 0) return false;
+    }
+    return true;
+}
+
+// Greitas modulinis kėlimas laipsniu
+// PATAISYTA: naudojame % vietoj fmod() - tai pašalina chr() deprecated įspėjimus
 function powerMod($base, $exp, $mod) {
+    if ($mod == 1) return 0;
     $result = 1;
     $base = $base % $mod;
     while ($exp > 0) {
         if ($exp % 2 == 1) {
-            $result = intval(fmod($result * $base, $mod));
+            $result = ($result * $base) % $mod;
         }
         $exp = intval($exp / 2);
-        $base = intval(fmod($base * $base, $mod));
+        $base = ($base * $base) % $mod;
     }
     return $result;
 }
@@ -65,5 +78,3 @@ function decryptRSA($cipher, $d, $n) {
     }
     return $text;
 }
-
-?>

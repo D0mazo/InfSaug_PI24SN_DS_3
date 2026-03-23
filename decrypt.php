@@ -1,25 +1,28 @@
 <?php
 include "rsa_functions.php";
 
-// Nuskaitymas iš failo
+if (!file_exists("data/encrypted.txt")) {
+    header('Content-Type: application/json');
+    echo json_encode(['error' => 'Užšifruotas failas nerastas!']);
+    exit;
+}
+
 $data  = file_get_contents("data/encrypted.txt");
 $lines = explode("\n", trim($data));
 
 $cipher = trim($lines[0]);
-$n      = (float)trim($lines[1]);
-$e      = (float)trim($lines[2]);
-$d      = (float)trim($lines[3]);
+$n      = (int)trim($lines[1]);
+$e      = (int)trim($lines[2]);
+$d      = (int)trim($lines[3]);
 
-// Dešifravimas
 $decrypted = decryptRSA($cipher, $d, $n);
 
-// Rezultatai grąžinami kaip JSON
 header('Content-Type: application/json');
 echo json_encode([
-        'cipher'    => $cipher,
-        'decrypted' => $decrypted,
-        'n'         => $n,
-        'e'         => $e,
-        'd'         => $d
+    'cipher'    => $cipher,
+    'decrypted' => $decrypted,
+    'n'         => $n,
+    'e'         => $e,
+    'd'         => $d
 ]);
 ?>
