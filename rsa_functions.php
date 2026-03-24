@@ -42,7 +42,6 @@ function isPrime($n) {
 }
 
 // Greitas modulinis kėlimas laipsniu
-// PATAISYTA: naudojame % vietoj fmod() - tai pašalina chr() deprecated įspėjimus
 function powerMod($base, $exp, $mod) {
     if ($mod == 1) return 0;
     $result = 1;
@@ -77,4 +76,14 @@ function decryptRSA($cipher, $d, $n) {
         $text .= chr($ascii);
     }
     return $text;
+}
+
+// Randa p ir q iš n
+function factorizeN($n) {
+    for ($i = 2; $i * $i <= $n; $i++) {
+        if ($n % $i == 0) {
+            return [$i, $n / $i];
+        }
+    }
+    return null;
 }

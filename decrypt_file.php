@@ -13,7 +13,6 @@ $lines   = explode("\n", $content);
 $cipher = null;
 $n      = null;
 $e      = null;
-$d      = null;
 
 foreach ($lines as $i => $line) {
     $line = trim($line);
@@ -25,16 +24,27 @@ foreach ($lines as $i => $line) {
         $n = (int)trim($parts[0]);
         $e = (int)trim($parts[1]);
     }
-    if ($line === 'Privatusis raktas (d):') {
-        $d = (int)trim($lines[$i + 1]);
-    }
+    // d nebeskaitome iš failo!
 }
 
-if ($cipher === null || $n === null || $d === null) {
+if ($cipher === null || $n === null || $e === null) {
     header('Content-Type: application/json');
-    echo json_encode(['error' => 'Neteisingas failo formatas! Įkelkite tik atsisiųstą encrypted.txt failą.']);
+    echo json_encode(['error' => 'Neteisingas failo formatas!']);
     exit;
 }
+
+// d apskaičiuojamas iš n
+$factors = factorizeN($n);
+if ($factors === null) {
+    header('Content-Type: application/json');
+    echo json_encode(['error' => 'Nepavyko faktorizuoti n!']);
+    exit;
+}
+
+$p   = $factors[0];
+$q   = $factors[1];
+$phi = ($p - 1) * ($q - 1);
+$d   = modInverse($e, $phi);
 
 $decrypted = decryptRSA($cipher, $d, $n);
 

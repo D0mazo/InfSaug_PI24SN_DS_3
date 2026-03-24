@@ -30,11 +30,12 @@ while (gcd($e, $phi) != 1) {
     $e += 2;
 }
 
-$d = modInverse($e, $phi);
+$d = modInverse($e, $phi); // kad matytųsi
+// $d čia NEBEREIKALINGAS — apskaičiuojamas dešifravimo metu
 $cipher = encryptRSA($text, $e, $n);
 
 if (!is_dir("data")) mkdir("data");
-file_put_contents("data/encrypted.txt", $cipher . "\n" . $n . "\n" . $e . "\n" . $d);
+file_put_contents("data/encrypted.txt", $cipher . "\n" . $n . "\n" . $e);
 
 header('Content-Type: application/json');
 echo json_encode([

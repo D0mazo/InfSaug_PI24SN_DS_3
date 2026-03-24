@@ -208,26 +208,25 @@
         }
     }
 
-    // --- Dešifravimas iš serverio failo ---
     async function decryptFromServer() {
-        showDecryptSpinner();
+        document.getElementById('decryptSpinner').classList.remove('hidden');
+        document.getElementById('decryptResult').classList.add('hidden');
+        document.getElementById('decryptError').classList.add('hidden');
 
-        try {
-            const res  = await fetch('decrypt.php', { method: 'POST' });
-            const data = await res.json();
-            hideDecryptSpinner();
+        const res  = await fetch('decrypt.php', { method: 'POST' });
+        const data = await res.json();
 
-            if (data.error) {
-                showDecryptError(data.error);
-                return;
-            }
+        document.getElementById('decryptSpinner').classList.add('hidden');
 
-            showDecryptResult(data.cipher, data.decrypted);
-
-        } catch (err) {
-            hideDecryptSpinner();
-            showDecryptError('Serverio klaida: ' + err.message);
+        if (data.error) {
+            document.getElementById('decryptError').textContent = '❌ ' + data.error;
+            document.getElementById('decryptError').classList.remove('hidden');
+            return;
         }
+
+        document.getElementById('decCipher').textContent = data.cipher;
+        document.getElementById('decText').textContent   = data.decrypted;
+        document.getElementById('decryptResult').classList.remove('hidden');
     }
 
     // --- Dešifravimas iš įkelto failo ---
@@ -288,9 +287,9 @@
         const cipher = document.getElementById('resCipher').textContent;
         const n      = document.getElementById('resN').textContent;
         const e      = document.getElementById('resE').textContent;
-        const d      = document.getElementById('resD').textContent;
 
-        const content = `Užšifruotas tekstas:\n${cipher}\n\nViešasis raktas (n, e):\n${n}, ${e}\n\nPrivatusis raktas (d):\n${d}`;
+
+        const content = `Užšifruotas tekstas:\n${cipher}\n\nViešasis raktas (n, e):\n${n}, ${e}`;
         const blob = new Blob([content], { type: 'text/plain' });
         const a    = document.createElement('a');
         a.href     = URL.createObjectURL(blob);
